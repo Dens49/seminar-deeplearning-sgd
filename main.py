@@ -136,6 +136,28 @@ def main():
                 writer.writeheader()
             writer.writerow(row)
 
+    def get_latest_experiment_id(row):
+        experiments_stats_path = "./experiments_stats"
+        csv_path = os.path.join(
+            experiments_stats_path, row["experiment_title"] + ".csv")
+
+        latest_experiment_id = -1
+        if os.path.isfile(csv_path):
+            with open(csv_path, "r") as f:
+                reader = csv.DictReader(
+                    f, list(row.keys()).insert(0, "experiment_id"))
+                # try reading one line only to see if the file has content
+                for row in reader:
+                    break
+                # go back to start and discard first line because it's the header
+                f.seek(0)
+                f.readline()
+                # find max experiment_id
+                if reader.line_num > 0:
+                    max_obj = max(reader, key=lambda x: x["experiment_id"])
+                    latest_experiment_id = int(max_obj["experiment_id"])
+        return latest_experiment_id
+
     def save_model_checkpoint(experiment_title, epoch):
         checkpoints_path = os.path.join("./checkpoints", experiment_title)
 
@@ -148,6 +170,8 @@ def main():
                    f"checkpoints/{experiment_title}/{experiment_title}_{epoch}")
 
     def train_epochs(experiment_title, epoch_amount=3):
+        experiment_id = get_latest_experiment_id(
+            dict(experiment_title=experiment_title)) + 1
         save_model_checkpoint(experiment_title, 0)
 
         start_secs = time.time()
@@ -167,6 +191,7 @@ def main():
 
             # save statistics
             epoch_stats = dict(
+                experiment_id=experiment_id,
                 experiment_title=experiment_title,
                 epoch=epoch,
                 epoch_amount=epoch_amount,
