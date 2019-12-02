@@ -69,12 +69,17 @@ def create_plots_from_checkpoints(bare_model, train_vis, checkpoints_path, check
         os.mkdir(vis_output_dir)
         print(f"directory {vis_output_dir} was created")
 
-    # find torch device and checkpoint_path to use
+    # find torch device and checkpoints_paths to use
     device = get_device()
     checkpoints_filenames = get_filenames_in_dir(
         checkpoints_path, filename_filter=lambda x: checkpoint_base_filename in x)
+    ordered_checkpoints_filenames = []
+    for num in range(0, len(checkpoints_filenames)):
+        ordered_checkpoints_filenames.append(
+            checkpoint_base_filename + "_" + str(num))
     checkpoints_paths = list(map(lambda x: os.path.join(
-        checkpoints_path, x), checkpoints_filenames))
+        checkpoints_path, x), ordered_checkpoints_filenames))
+
     if amount == -1:
         checkpoint_path = checkpoints_paths[-1]
     elif amount < len(checkpoints_paths):
@@ -132,20 +137,12 @@ if __name__ == "__main__":
     bare_model = resnets.resnet20_cifar()
     train_vis_function = TrainVisCIFAR10(
         "./cifar_data").get_train_vis_function()
-    # create_plots_from_checkpoints(bare_model,
-    #                               train_vis_function,
-    #                               "./checkpoints/example",
-    #                               "resnet_minima_point",
-    #                               "./visualizations",
-    #                               "resnet_minima_point",
-    #                               amount=7,
-    #                               loss_3D_degrees=120)
 
     create_plots_from_checkpoints(bare_model,
                                   train_vis_function,
-                                  "./checkpoints/cifar_resnet_sgd",
-                                  "cifar_resnet_sgd",
-                                  "./visualizations",
-                                  "cifar_resnet_sgd",
+                                  "./checkpoints/wip_cifar_resnet_sgd",
+                                  "wip_cifar_resnet_sgd",
+                                  "./visualizations/wip_cifar_resnet_sgd",
+                                  "wip_cifar_resnet_sgd",
                                   amount=-1,
-                                  loss_3D_degrees=120)
+                                  loss_3D_degrees=100)
