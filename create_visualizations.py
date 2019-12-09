@@ -12,7 +12,7 @@ from gradvis.pytorch_nn_model import PyTorch_NNModel
 
 def get_device():
     can_use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda:0" if can_use_cuda else "cpu")
+    device = torch.device("cuda" if can_use_cuda else "cpu")
     cudnn.benchmark = True
     return device
 
@@ -37,7 +37,7 @@ class TrainVisCIFAR10:
         """
         model.train()
         train_loss = 0
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.CrossEntropyLoss().to(self.device)
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
             inputs, targets = inputs.to(self.device), targets.to(self.device)
             outputs = model(inputs)
