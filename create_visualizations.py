@@ -65,7 +65,6 @@ def create_plots_from_checkpoints(bare_model, train_vis, checkpoints_path, check
         return False
 
     if not path_exists(vis_output_dir):
-        # TODO: this will probably not work in google colab...
         os.mkdir(vis_output_dir)
         print(f"directory {vis_output_dir} was created")
 
@@ -133,16 +132,24 @@ def path_exists(path):
 
 
 if __name__ == "__main__":
-    # TODO: implement interactive plot for notebooks
     bare_model = resnets.resnet20_cifar()
     train_vis_function = TrainVisCIFAR10(
         "./cifar_data").get_train_vis_function()
 
+    # create visualizations for the two demo experiments
     create_plots_from_checkpoints(bare_model,
                                   train_vis_function,
-                                  "./checkpoints/wip_cifar_resnet_sgd",
-                                  "wip_cifar_resnet_sgd",
-                                  "./visualizations/wip_cifar_resnet_sgd",
-                                  "wip_cifar_resnet_sgd",
+                                  checkpoints_path="./checkpoints/SGD_with_variable_batch_size_16_0.35",
+                                  checkpoint_base_filename="SGD_with_variable_batch_size_16_0.35",
+                                  vis_output_dir="./visualizations/SGD_with_variable_batch_size_16_0.35",
+                                  vis_output_base_filename="SGD_with_variable_batch_size_16_0.35",
                                   amount=-1,
-                                  loss_3D_degrees=100)
+                                  loss_3D_degrees=160)
+    create_plots_from_checkpoints(bare_model,
+                                  train_vis_function,
+                                  checkpoints_path="./checkpoints/SGD_with_momentum_0.9_16_0.04",
+                                  checkpoint_base_filename="SGD_with_momentum_0.9_16_0.04",
+                                  vis_output_dir="./visualizations/SGD_with_momentum_0.9_16_0.04",
+                                  vis_output_base_filename="SGD_with_momentum_0.9_16_0.04",
+                                  amount=-1,
+                                  loss_3D_degrees=50)

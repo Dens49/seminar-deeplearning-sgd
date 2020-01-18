@@ -41,9 +41,9 @@ def run_experiment(experiment):
     # define the train and test data
     cifar_data_dir = "./cifar_data"
     train_set = torchvision.datasets.CIFAR10(
-        root=cifar_data_dir, train=True, transform=transform)
+        root=cifar_data_dir, train=True, transform=transform, download=True)
     test_set = torchvision.datasets.CIFAR10(
-        root=cifar_data_dir, train=False, transform=transform)
+        root=cifar_data_dir, train=False, transform=transform, download=True)
 
     # define default loaders for train and test data
     train_loader = torch.utils.data.DataLoader(
@@ -133,7 +133,6 @@ def run_experiment(experiment):
         file_exists = os.path.isfile(csv_path)
 
         if not (os.path.exists(experiments_stats_path) and os.path.isdir(experiments_stats_path)):
-            # TODO: this will probably not work in google colab...
             os.mkdir(experiments_stats_path)
             print(f"directory {experiments_stats_path} was created")
 
@@ -169,7 +168,6 @@ def run_experiment(experiment):
         checkpoints_path = os.path.join("./checkpoints", experiment_title)
 
         if not (os.path.exists(checkpoints_path) and os.path.isdir(checkpoints_path)):
-            # TODO: this will probably not work in google colab...
             os.mkdir(checkpoints_path)
             print(f"directory {checkpoints_path} was created")
 
@@ -187,8 +185,8 @@ def run_experiment(experiment):
             print(f"Epoch: [{epoch}/{epoch_amount}]")
             # incorporate lr scheduling
             if experiment.has_lr_scheduler():
-                experiment.lr_scheduler.step()
-                torch.optim.lr_scheduler.CosineAnnealingWarmRestart()
+                if epoch > 1:
+                    experiment.lr_scheduler.step()
                 print(
                     f"  current learning rate: {experiment.lr_scheduler.get_lr()}")
 

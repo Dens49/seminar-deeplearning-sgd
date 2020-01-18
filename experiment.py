@@ -26,14 +26,11 @@ class Experiment:
                                              lr=self.params["lr"],
                                              momentum=self.params["momentum"])
         elif self.optimizer_name == "Adagrad":
-            self.optimizer = torch.optim.Adagrad(model_parameters,
-                                                 lr=self.params["lr"],
-                                                 eps=self.params["eps"])
+            self.optimizer = torch.optim.Adagrad(model_parameters)
         elif self.optimizer_name == "Rmsprop":
             self.optimizer = torch.optim.RMSprop(model_parameters,
                                                  lr=self.params["lr"],
-                                                 alpha=self.params["alpha"],
-                                                 eps=self.params["eps"])
+                                                 momentum=self.params["momentum"])
         elif self.optimizer_name == "Adam":
             self.optimizer = torch.optim.Adam(model_parameters,
                                               lr=self.params["lr"],
@@ -42,7 +39,7 @@ class Experiment:
 
         if self.lr_scheduler_name == "COSINE_ANNEALING_WARM_RESTARTS":
             self.lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
-                self.optimizer)
+                self.optimizer, T_0=self.params["T_0"], T_mult=self.params["T_mult"])
         elif self.lr_scheduler_name == "STEP_LR":
             self.lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer,
                                                                 step_size=self.params["lr_step_size"],
